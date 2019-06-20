@@ -295,7 +295,7 @@ pointer (*f)();
 #if ARM
   cd->c.code.entry2=makeint((eusinteger_t)f);
 #endif
-  if (name!=NULL) putprop(ctx,cd,name,intern(ctx,"NAME",4,keywordpkg));
+  if (name!=NULL) putprop(ctx,cd,name,defkeyword(ctx,"NAME"));
   return(cd);}
 
 
