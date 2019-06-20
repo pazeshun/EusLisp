@@ -332,22 +332,6 @@ register pointer argv[];
 { ckarg(2);
   return(assq(argv[0],argv[1])); }
 
-pointer ASSOC(ctx,n,argv)
-register context *ctx;
-int n;
-register pointer argv[];
-{ register pointer item=argv[0],alist=argv[1],temp,compare;
-  ckarg(2);
-  while (islist(alist)) {
-    temp=ccar(alist);
-    if (islist(temp)) {
-      compare=equal(item,ccar(temp));
-      if (compare==T) return(temp);
-      else if (compare==UNBOUND) error(E_CIRCULAR);
-      else alist=ccdr(alist);}
-    else error(E_ALIST);}
-  return(NIL);}
-
 pointer SUPERASSOC(ctx,n,argv)
 register context *ctx;
 int n;
@@ -439,7 +423,6 @@ register pointer mod;
   defun(ctx,"MEMBER",mod,MEMBER,NULL);
   defun(ctx,"SUPERMEMBER",mod,SUPERMEMBER,NULL);
   defun(ctx,"ASSQ",mod,ASSQ,NULL);
-  defun(ctx,"ASSOC",mod,ASSOC,NULL);
   defun(ctx,"SUPERASSOC",mod,SUPERASSOC,NULL);
   }
 

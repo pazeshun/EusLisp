@@ -288,7 +288,6 @@ extern pointer MEMBER(context */*ctx*/, int /*n*/, pointer /*argv*/*);
 extern pointer SUPERMEMBER(context */*ctx*/, int /*n*/, pointer /*argv*/*);
 extern pointer assq(pointer /*item*/, pointer /*alist*/);
 extern pointer ASSQ(context */*ctx*/, int /*n*/, pointer /*argv*/*);
-extern pointer ASSOC(context */*ctx*/, int /*n*/, pointer /*argv*/*);
 extern pointer SUPERASSOC(context */*ctx*/, int /*n*/, pointer /*argv*/*);
 extern pointer BUTLAST(context */*ctx*/, int /*n*/, pointer /*argv*/*);
 extern pointer NBUTLAST(context */*ctx*/, int /*n*/, pointer /*argv*/*);
