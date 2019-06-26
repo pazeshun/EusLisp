@@ -566,23 +566,28 @@ pointer SIGERROR(ctx,n,argv)
 register context *ctx;
 register int n;
 register pointer *argv;
-{ register int i;
-  pointer  msg;
+{ register int i=0;
+  pointer  msg, errobj;
   pointer *argb=ctx->vsp;
-  if (isstring(argv[0])) {
-     vpush(NIL);
-     for (i=0; i<n; i++) vpush(argv[i]);
-     msg=XFORMAT(ctx,n+1,argb);
-     error(E_USER,(pointer)(msg->c.str.chars),argv[1]);}
-  else error((enum errorcode)(ckintval(argv[0])),argv[1]);}
 
-pointer INSTALL_ERRHANDLER(ctx,n,argv)
-register context *ctx;
-register int n;
-register pointer *argv;
-{ ckarg(1);
-  ctx->errhandler=argv[0];
-  return(argv[0]);}
+  if (n==0) error(E_MISMATCHARG);
+  if (isclass(argv[0])) {
+    /* ensure is derived from error class */
+    int objcix,klasscix;
+    objcix=intval(argv[0]->c.cls.cix);
+    klasscix=intval(C_ERROR->c.cls.cix);
+    if (!(objcix>=klasscix) || !(objcix<=classtab[klasscix].subcix)) {
+      error(E_TYPE_ERROR, "error class expected");}
+    i++;
+    errobj=makeobject(argv[0]);}
+  else {
+    errobj=makeobject(C_ERROR);}
+  if (isstring(argv[i])) {
+     vpush(NIL);
+     for (; i<n; i++) vpush(argv[i]);
+     msg=XFORMAT(ctx,n+1,argb);}
+  else error(E_NOSTRING);
+  error(E_USER,errobj,(pointer)(msg->c.str.chars));}
 
 
 void lispio(ctx,mod)
@@ -616,6 +621,5 @@ pointer mod;
   defunpkg(ctx,"RESET-READTABLE",mod,RESETREADTABLE,syspkg);
   defun(ctx,"FORMAT",mod,XFORMAT,NULL);
   defun(ctx,"ERROR",mod,SIGERROR,NULL);
-  defun(ctx,"INSTALL-ERROR-HANDLER",mod,INSTALL_ERRHANDLER,NULL);
   }
 
