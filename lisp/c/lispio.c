@@ -589,14 +589,6 @@ register pointer *argv;
   else error(E_NOSTRING);
   error(E_USER,errobj,(pointer)(msg->c.str.chars));}
 
-pointer INSTALL_ERRHANDLER(ctx,n,argv)
-register context *ctx;
-register int n;
-register pointer *argv;
-{ ckarg(1);
-  ctx->errhandler=argv[0];
-  return(argv[0]);}
-
 
 void lispio(ctx,mod)
 register context *ctx;
@@ -629,6 +621,5 @@ pointer mod;
   defunpkg(ctx,"RESET-READTABLE",mod,RESETREADTABLE,syspkg);
   defun(ctx,"FORMAT",mod,XFORMAT,NULL);
   defun(ctx,"ERROR",mod,SIGERROR,NULL);
-  defun(ctx,"INSTALL-ERROR-HANDLER",mod,INSTALL_ERRHANDLER,NULL);
   }
 
