@@ -560,6 +560,7 @@ extern void throw(context */*ctx*/, pointer /*tag*/, pointer /*result*/);
 extern pointer THROW(context */*ctx*/, pointer /*arg*/);
 extern pointer FLET(context */*ctx*/, pointer /*arg*/);
 extern pointer LABELS(context */*ctx*/, pointer /*arg*/);
+extern pointer RESUME(context */*ctx*/, int /*n*/, pointer */*argv*/);
 extern pointer RESET(context */*ctx*/, int /*n*/, pointer */*argv*/);
 extern pointer EVALHOOK(context */*ctx*/, int /*n*/, pointer */*argv*/);
 extern pointer BLOCK(context */*ctx*/, pointer /*arg*/);
@@ -622,6 +623,7 @@ extern pointer LISTALLREFERENCES(context */*ctx*/, int /*n*/, pointer /*argv*/*)
 extern pointer ADDRESS(context */*ctx*/, int /*n*/, pointer /*argv*/*);
 extern pointer PEEK(context */*ctx*/, int /*n*/, pointer /*argv*/*);
 extern pointer POKE(context */*ctx*/, int /*n*/, pointer /*argv*/*);
+extern pointer PRINTSTACK(context */*ctx*/, int /*n*/, pointer */*argv*/);
 extern pointer LISTALLCATCHERS(context */*ctx*/, int /*n*/, pointer */*argv*/);
 extern pointer LISTBINDINGS(context */*ctx*/, int /*n*/, pointer */*argv*/);
 extern pointer LISTSPECIALBINDINGS(context */*ctx*/, int /*n*/, pointer */*argv*/);
