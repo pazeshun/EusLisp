@@ -522,8 +522,8 @@ pointer arg;
   if ((val=(pointer)eussetjmp(catchbuf))==0) val=progn(ctx,body);
   else if ((eusinteger_t)val==1) val=makeint(0);	/*longjmp cannot return 0*/
   ctx->callfp=ctx->catchfp->cf;
-  ctx->bindfp=ctx->catchfp->bf;
-  ctx->fletfp=ctx->catchfp->ff;
+  ctx->bindfp=ctx->callfp->bf;
+  ctx->fletfp=ctx->callfp->ff;
   ctx->vsp=(pointer *)ctx->catchfp;
   ctx->catchfp=(struct catchframe *)*ctx->vsp;
 #ifdef __RETURN_BARRIER
@@ -618,6 +618,23 @@ register pointer arg;
   result=progn(ctx,ccdr(arg));
   ctx->fletfp=ffp;
   return(result);}
+
+pointer RESUME(ctx,n,argv)
+register context *ctx;
+int n;
+pointer *argv;
+{ ckarg2(1,2);
+  int depth=ckintval(argv[0]);
+  register struct callframe *vf=(struct callframe *)(ctx->callfp);
+  pointer result;
+  /* unwind stack */
+  for(;depth> 0 && vf->vlink; depth--, vf=vf->vlink) {};
+  ctx->callfp=vf;
+  unwind(ctx,(pointer *)ctx->callfp);
+  /* resume with value */
+  if (n==1) result=eval(ctx,vf->form);
+  else result=argv[1];
+  euslongjmp(*(vf->jbp),result);}
 
 pointer RESET(ctx,n,argv)
 register context *ctx;
@@ -1336,6 +1353,7 @@ pointer mod;
   defmacro(ctx,"RETURN",mod,RETURN);
   defspecial(ctx,"TAGBODY",mod,TAGBODY);
   defspecial(ctx,"GO",mod,GO);
+  defun(ctx,"RESUME",mod,RESUME,NULL);
   defun(ctx,"RESET",mod,RESET,NULL);
   defun(ctx,"EVALHOOK",mod,EVALHOOK,NULL);
   defun(ctx,"MACROEXPAND2",mod,MACEXPAND2,NULL);

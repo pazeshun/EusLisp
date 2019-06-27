@@ -475,7 +475,10 @@ enum ch_attr {
 /****************************************************************/
 struct callframe {
   struct  callframe *vlink;
+  struct  bindframe *bf;	/*bind frame save*/
+  struct  fletframe *ff;	/*flet frame save*/
   pointer form;
+  jmp_buf* jbp;
   };
 
 struct bindframe {	/*to achieve lexical binding in the interpreter*/
@@ -497,9 +500,7 @@ struct blockframe {
 struct catchframe {
   struct  catchframe *nextcatch;
   pointer label;
-  struct  bindframe *bf;	/*bind frame save*/
   struct  callframe *cf;	/*call frame save*/
-  struct  fletframe *ff;
   jmp_buf *jbp;
   };
 
