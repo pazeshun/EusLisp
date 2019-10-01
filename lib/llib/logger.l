@@ -5,7 +5,7 @@
 (export '(set-logger-level log-debug log-info log-warn log-error log-fatal))
 
 ;; Condition instance for logger messages
-(defclass logger-message :super condition)
+(defcondition logger-message :slots (lvl args))
 
 ;; Logger level related
 (defconstant logger-table
@@ -31,12 +31,18 @@
 (defmacro level-belongs (lvl &rest options)
   `(or ,@(mapcar #'(lambda (val) `(= ,lvl (get-level ,val))) options)))
 
-(defmacro with-pval (slots instance &rest body)
-  `(let (,@(mapcar #'(lambda (name) `(,name (get ,instance ,(intern (symbol-pname name) *keyword-package*)))) slots))
-     ,@body))
+(defmacro with-slots (slots instance &rest body)
+  (let ((inst-val (gensym)))
+    `(let* ((,inst-val ,instance) ;; evaluate instance only once
+            ,@(mapcar #'(lambda (s)
+                          (if (consp s)
+                              `(,(car s) (send ,inst-val :get-val ',(cadr s)))
+                              `(,s (send ,inst-val :get-val ',s))))
+                      slots))
+       ,@body)))
 
 (defun format-log-message (log)
-  (with-pval (msg lvl args) log
+  (with-slots (msg lvl args) log
     (format nil "[~A] ~A"
             (symbol-pname (get-level-name lvl))
             (apply #'format nil msg args))))
@@ -57,8 +63,8 @@
 
 ;; Printing callback
 (defun logger-callback (log)
-  (when (>= (get log :lvl) *logger-level*)
-    (let ((lvl (get log :lvl))
+  (when (>= (send log :get-val 'lvl) *logger-level*)
+    (let ((lvl (send log :get-val 'lvl))
           (msg (format-log-message log)))
       (cond
         ((level-belongs lvl :debug :info)

@@ -549,7 +549,7 @@ pointer argv[];
 	case '~':	/*tilda*/
 	  writech(dest,'~'); break;
 	case 'T': 	/*tabulate*/
-	  writech(dest,9); break;;
+	  writech(dest,9); break;
 	default:	break;
         }  
       }
@@ -587,7 +587,7 @@ register pointer *argv;
      for (; i<n; i++) vpush(argv[i]);
      msg=XFORMAT(ctx,n+1,argb);}
   else error(E_NOSTRING);
-  error(E_USER,errobj,(pointer)(msg->c.str.chars));}
+  error(E_REPL,errobj,(pointer)(msg->c.str.chars));}
 
 
 void lispio(ctx,mod)

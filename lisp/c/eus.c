@@ -282,6 +282,9 @@ char *errmsg[100]={
 	"illegal #n= or #n# label",
 /* USER ERROR */
 	"",
+/* REPL ERROR */
+        "",
+/* END ERROR */
 	"E_END",
 	};
 
@@ -371,10 +374,10 @@ va_dcl
         msg=makestring(msgstr,strlen(msgstr));
         free(msgstr);
 	break;
-    case E_USER:
+    case E_REPL:
       errobj = (pointer)va_arg(args,pointer);
     case E_ARGUMENT_ERROR: case E_PROGRAM_ERROR: case E_NAME_ERROR: case E_TYPE_ERROR:
-    case E_VALUE_ERROR: case E_INDEX_ERROR: case E_IO_ERROR:
+    case E_VALUE_ERROR: case E_INDEX_ERROR: case E_IO_ERROR: case E_USER:
       errstr = (char*)va_arg(args,pointer);
     default:
       msg=makestring(errstr,strlen(errstr));}
@@ -417,11 +420,14 @@ va_dcl
       case E_IO_ERROR: case E_IODIRECTION: case E_OPENFILE: case E_EOF:
       case E_ILLCH: case E_NODELIMITER: case E_FORMATSTRING: case E_READLABEL: 
         errobj=makeobject(C_IOERROR);  break;
+    // USER ERROR
+      case E_USER:
+        errobj=makeobject(C_ERROR);  break;
   }
 
-  putprop(ctx,errobj,msg,defkeyword(ctx,"MSG"));
-  putprop(ctx,errobj,callstack,defkeyword(ctx,"CALLSTACK"));
-  putprop(ctx,errobj,form,defkeyword(ctx,"FORM"));
+  pointer_update(errobj->c.obj.iv[0],msg);
+  pointer_update(errobj->c.obj.iv[1],callstack);
+  pointer_update(errobj->c.obj.iv[2],form);
   arglst=cons(ctx,errobj,NIL);
 
   Spevalof(QEVALHOOK)=NIL;	/* reset eval hook */
@@ -835,8 +841,8 @@ static void initclasses()
   C_BIGNUM=speval(BIGNUM);
 
 /* conditions */
-  C_CONDITION=speval(basicclass("CONDITION",C_PROPOBJ,&conditioncp,0));
-  C_ERROR=speval(basicclass("ERROR",C_CONDITION,&errorcp,0));
+  C_CONDITION=speval(basicclass("CONDITION",C_OBJECT,&conditioncp,1,"MSG"));
+  C_ERROR=speval(basicclass("ERROR",C_CONDITION,&errorcp,2,"CALLSTACK","FORM"));
   C_ARGUMENTERROR=speval(basicclass("ARGUMENT-ERROR",C_ERROR,&argumenterrorcp,0));
   C_PROGRAMERROR=speval(basicclass("PROGRAM-ERROR",C_ERROR,&programerrorcp,0));
   C_NAMEERROR=speval(basicclass("NAME-ERROR",C_ERROR,&nameerrorcp,0));
