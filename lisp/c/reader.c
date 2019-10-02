@@ -391,6 +391,9 @@ register pointer s;	/*input stream*/
 
   ch=nextch(ctx,s);
   if (ch!='(') error(E_READOBJECT);
+  ch=nextch(ctx,s);
+  if (ch==')') error(E_NOCLASS, NULL);
+  unreadch(s,ch);
   name=read1(ctx,s);
   if (!issymbol(name)) error(E_READOBJECT);
   klass=speval(name);
@@ -427,6 +430,9 @@ register pointer s;	/*input stream*/
 
   ch=nextch(ctx,s);
   if (ch!='(') error(E_READOBJECT);
+  ch=nextch(ctx,s);
+  if (ch==')') error(E_NOCLASS, NULL);
+  unreadch(s,ch);
   name=read1(ctx,s);
   if (!issymbol(name)) error(E_READOBJECT);
   klass=speval(name);
