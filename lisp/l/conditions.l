@@ -6,27 +6,31 @@
           sigint-handler interruption-event handler-bind handler-case
           next-handler))
 
+(defvar *current-condition*)
+(defvar *current-condition-handler*) ;; for next-handler
+
 (defmethod condition
-  (:init (&key msg) (send self :msg msg) self)
-  (:msg (&optional val) (if val (setq msg val) msg)))
+  (:init (&rest init-args &key message &allow-other-keys)
+    ;; Initialize slots
+    (do* ((key (pop init-args) (pop init-args))
+          (val (pop init-args) (pop init-args)))
+         ((null key))
+      (send self :set-val (symbol-pname key) val))
+    self)
+  (:message (&optional val) (if val (setq message val) message)))
 
 (defmethod error
   (:callstack (&optional val) (if val (setq callstack val) callstack))
   (:form (&optional val) (if val (setq form val) form)))
 
-(defmacro defcondition (name &key slots (super condition))
+(defmacro defcondition (name &key slots (super 'condition))
   `(progn
      (defclass ,name :slots ,slots :super ,super)
      (defmethod ,name
+         (:init (&rest init-args) (send-super* :init init-args))
          ,@(mapcar #'(lambda (s) `(,(intern (send s :pname) *keyword-package*) (&optional val)
                                     (if val (send self :set-val ',s val) ,s)))
-                   slots))
-     (let ((all-slots (coerce (send ,name :slots) cons)))
-       (eval
-        `(defmethod ,',name
-             (:init (&key ,@all-slots)
-                       ,@(mapcar #'(lambda (place) `(send self :set-val ',place ,place)) all-slots)
-                       self))))))
+                   slots))))
 
 (defun install-handler (label handler)
   (unless (and (classp label) (derivedp (instantiate label) condition))
@@ -61,13 +65,19 @@
   (if (classp obj) (setq obj (instantiate obj)))
   (if init-args (send* obj :init init-args))
   (unless (derivedp obj condition) (error type-error "condition class expected"))
-  (block signals
-    (dolist (handle *condition-handler*)
-      (when (derivedp obj (car handle))
-        (catch :next-handler
-          (return-from signals (funcall (cdr handle) obj)))))))
+  (do ((*current-condition-handler* *condition-handler* (cdr *current-condition-handler*))
+       (*current-condition* obj))
+      ((null *current-condition-handler*))
+    (when (derivedp obj (caar *current-condition-handler*))
+      (return (funcall (cdar *current-condition-handler*) obj)))))
 
-(defun next-handler () (throw :next-handler nil))
+(defun next-handler (&optional (obj *current-condition*))
+  (do ((*current-condition-handler*
+        (cdr *current-condition-handler*)
+        (cdr *current-condition-handler*)))
+      ((null *current-condition-handler*))
+    (when (derivedp obj (caar *current-condition-handler*))
+      (return (funcall (cdar *current-condition-handler*) obj)))))
 
 (defun print-callstack (&optional (stack (sys:list-callstack)) max (os *error-output*))
   (let ((tms (if max
@@ -78,11 +88,11 @@
       (dotimes (i tms)
         (format os "~3D: at ~S~%" i (nth i stack))))))
 
-(defun print-error-msg (err &optional (os *error-output*))
+(defun print-error-message (err &optional (os *error-output*))
   (unless (derivedp err condition) (error type-error "condition class expected"))
-  (when (send err :msg)
+  (when (send err :message)
       (format os "~C[1;3~Cm~A~C[0m: ~A"
-              #x1b (+ 1 48) (string-upcase (metaclass-name (class err))) #x1b (send err :msg))
+              #x1b (+ 1 48) (string-upcase (metaclass-name (class err))) #x1b (send err :message))
       (if (and (derivedp err error) (send err :form))
           (format os " in ~S" (send err :form)))
       (terpri os)))
@@ -95,7 +105,7 @@
 (defun euserror (err)
   (when (send err :callstack)
     (print-callstack (send err :callstack) *max-callstack-depth*))
-  (print-error-msg err)
+  (print-error-message err)
   (let ((*replevel* (1+ *replevel*))
         (*reptype* "E"))
     ;; do not carry handlers through the error stack
@@ -110,12 +120,12 @@
 ;;; unix:signal handling
 ;;;
 
-(defclass unix::signal-received :super condition)
-(defclass unix::sigint-received :super unix::signal-received)
-(defclass unix::sigcont-received :super unix::signal-received)
+(defcondition unix::signal-received)
 (defmacro unix::install-signal-handler (sig obj &rest init-args)
   (let ((fname (intern (format nil "~A-SIGNALIZE-CONDITION" (symbol-pname sig)) *unix-package*)))
     `(progn
+       (unless (boundp ',obj)
+         (defcondition ,obj :super unix::signal-received))
        (defun ,fname (sig code) (signals ,obj ,@init-args))
        (unix:signal ,sig ',fname))))
 
@@ -128,10 +138,10 @@
 (defclass interruption-event :super condition)
 (defun sigint-handler (c)
   (unix::with-alarm-interrupt
-    (signals interruption-event :msg "keyboard interrupt")))
+    (signals interruption-event :message "keyboard interrupt")))
 
 (defun interruption-handler (c)
-  (print-error-msg c)
+  (print-error-message c)
   (let* ((*replevel* (1+ *replevel*))
          (*reptype* "B"))
     (while (catch *replevel* (reploop #'toplevel-prompt)))))
@@ -144,7 +154,7 @@
 (install-handler error #'euserror)
 (install-handler unix::sigint-received 'sigint-handler)
 (install-handler unix::sigcont-received
-  `(lambda-closure ,(gensym) 0 0 (c)
+  '(lambda-closure nil 0 0 (c)
      (when (memq *replevel* (sys::list-all-catchers))
        (reset *replevel*))))
 ;; in order to remain in the same stack, reset command must not be compiled
