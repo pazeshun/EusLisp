@@ -200,8 +200,7 @@
 (defun reploop-non-select (&optional (repstream *terminal-io*)
 			 (ttyp (unix:isatty repstream)))
 ;read-eval-print loop
-  (let* ((*error-handler* 'euserror)
-	 (eof (gensym))
+  (let* ((eof (gensym))
 	 (input) (local-bindings) (special-bindings))
      (if (> *replevel* 0)
 	 (setq  local-bindings (sys:list-all-bindings)
@@ -222,8 +221,7 @@
 
 (defun reploop-select (&optional (repstream *terminal-io*)
 			 (ttyp (unix:isatty repstream))) 
-  (let* ((*error-handler* 'euserror)
-	 (eof (gensym))
+  (let* ((eof (gensym))
 	 (input) (local-bindings) (special-bindings))
      (if ttyp (prompt repstream))
      (if (> *replevel* 0)
