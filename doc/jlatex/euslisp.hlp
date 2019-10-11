@@ -42,6 +42,17 @@
 "some" 2 "jcontrols" 11812 3
 "functionp" 2 "jcontrols" 12088 3
 "compiled-function-p" 2 "jcontrols" 12577 3
+"condition" 0 "jcontrols" 13198 4
+":init" 1 "jcontrols" 13291 3
+"lisp::*condition-handler*" 5 "jcontrols" 13621 2
+"lisp::*current-condition*" 5 "jcontrols" 13739 2
+"defcondition" 3 "jcontrols" 13834 3
+"install-handler" 2 "jcontrols" 14072 3
+"remove-handler" 2 "jcontrols" 14449 3
+"handler-bind" 2 "jcontrols" 14714 3
+"handler-case" 3 "jcontrols" 15079 3
+"signals" 2 "jcontrols" 15474 3
+"next-handler" 2 "jcontrols" 15879 3
 "defclass" 3 "jobjects" 4063 3
 "defmethod" 6 "jobjects" 4582 3
 "defclassmethod" 3 "jobjects" 4812 2
