@@ -3,7 +3,7 @@
 (in-package "LISP")
 
 (export '(defcondition install-handler remove-handler signals euserror
-          sigint-handler interruption-event handler-bind handler-case
+          sigint-handler interruption handler-bind handler-case
           next-handler))
 
 (defvar *current-condition*)
@@ -33,8 +33,12 @@
                    slots))))
 
 (defun install-handler (label handler)
+  ;; ensure condition class
   (unless (and (classp label) (derivedp (instantiate label) condition))
     (error type-error "condition class expected"))
+  ;; ensure global scope
+  (when (and (consp handler) (eql (car handler) 'lambda-closure))
+    (setq handler `(lambda-closure ,(second handler) 0 0 ,@(nthcdr 4 handler))))
   (unless (functionp handler) type-error "function expected")
   (push (cons label handler) *condition-handler*)
   t)
@@ -135,10 +139,10 @@
        ,@body
        (unix:setitimer 0 ,value ,interval))))
 
-(defclass interruption-event :super condition)
+(defcondition interruption)
 (defun sigint-handler (c)
   (unix::with-alarm-interrupt
-    (signals interruption-event :message "keyboard interrupt")))
+    (signals interruption :message "keyboard interrupt")))
 
 (defun interruption-handler (c)
   (print-error-message c)
@@ -146,7 +150,7 @@
          (*reptype* "B"))
     (while (catch *replevel* (reploop #'toplevel-prompt)))))
 
-(install-handler interruption-event 'interruption-handler)
+(install-handler interruption 'interruption-handler)
 
 ;; install handlers
 (unix:install-signal-handler unix::sigint unix::sigint-received)
