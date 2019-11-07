@@ -53,7 +53,6 @@
 "handler-bind" 2 "controls" 12129 3
 "handler-case" 3 "controls" 12397 3
 "signals" 2 "controls" 12695 3
-"next-handler" 2 "controls" 12940 3
 "defclass" 3 "objects" 3223 3
 "defmethod" 6 "objects" 3684 3
 "defclassmethod" 3 "objects" 3859 2
