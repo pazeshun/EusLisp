@@ -764,7 +764,7 @@ void resume_all_threads()
 #if vxworks
 void gc()
 { if (debug)  fprintf(stderr,"\n;; gc:");
-  breakck;
+  // breakck;
   gccount++;
   markall();
   sweepall();
@@ -772,7 +772,8 @@ void gc()
     fprintf(stderr," free/total=%d/%d stack=%d ",
         	freeheap,totalheap,markctx->vsp-markctx->stack);
     }
-  breakck;  }
+  // breakck;
+}
 #else 
 
 void gc()
@@ -781,7 +782,7 @@ void gc()
   context *ctx=euscontexts[thr_self()];
 
   if (debug)  fprintf(stderr,"\n;; gc: thread=%d ",thr_self());
-  breakck;
+  // breakck;
   gccount++;
   times(&tbuf1);
 
@@ -822,7 +823,7 @@ void gc()
     ufuncall(ctx,gchook,gchook,(pointer)(ctx->vsp-2),ctx->bindfp,2);
     ctx->vsp -= 2;
     }
-  breakck;
+  // breakck;
 }
 #endif
 
