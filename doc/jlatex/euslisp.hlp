@@ -49,10 +49,10 @@
 "lisp::*current-condition*" 5 "jcontrols" 13849 2
 "defcondition" 3 "jcontrols" 13944 3
 "install-handler" 2 "jcontrols" 14182 3
-"remove-handler" 2 "jcontrols" 14559 3
-"handler-bind" 2 "jcontrols" 14824 3
-"handler-case" 3 "jcontrols" 15189 3
-"signals" 2 "jcontrols" 15584 3
+"remove-handler" 2 "jcontrols" 14840 3
+"handler-bind" 2 "jcontrols" 15105 3
+"handler-case" 3 "jcontrols" 15470 3
+"signals" 2 "jcontrols" 15865 3
 "defclass" 3 "jobjects" 4063 3
 "defmethod" 6 "jobjects" 4582 3
 "defclassmethod" 3 "jobjects" 4812 2
