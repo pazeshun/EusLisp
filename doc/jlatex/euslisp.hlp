@@ -53,6 +53,7 @@
 "handler-bind" 2 "jcontrols" 15105 3
 "handler-case" 3 "jcontrols" 15492 3
 "signals" 2 "jcontrols" 15887 3
+"invoke-next-handler" 2 "jcontrols" 16308 3
 "defclass" 3 "jobjects" 4063 3
 "defmethod" 6 "jobjects" 4582 3
 "defclassmethod" 3 "jobjects" 4812 2
