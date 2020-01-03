@@ -1376,7 +1376,7 @@ pointer *argv;
   GC_REGION(treq.tv_sec=ckintval(argv[0]));
   treq.tv_nsec = 0;
   while (nanosleep(&treq, &trem)<0) {
-    // breakck;	/*signal exists?*/
+    breakck;	/*signal exists?*/
     treq=trem;}
   return(T);}
 
@@ -1390,7 +1390,7 @@ pointer *argv;
   GC_REGION(treq.tv_sec  =  ckintval(argv[0])/1000000;
             treq.tv_nsec = (ckintval(argv[0])%1000000)*1000);
   while (nanosleep(&treq, &trem)<0) {
-    // breakck;
+    breakck;
     treq=trem;}
   return(T);}
 #endif
