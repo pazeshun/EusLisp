@@ -257,7 +257,7 @@ void sweepall()
 #if vxworks
 gc()
 { if (debug)  fprintf(stderr,"\n;; gc:");
-  breakck;
+  // breakck;
   gccount++;
   markall();
   sweepall();
@@ -265,14 +265,14 @@ gc()
     fprintf(stderr," free/total=%d/%d stack=%d ",
         	freeheap,totalheap,markctx->vsp-markctx->stack);
     }
-  breakck;
+  // breakck;
   }
 #else 
 gc()
 { struct tms tbuf1,tbuf2,tbuf3;
 
   if (debug)  fprintf(stderr,"\n;; gc:");
-  breakck;
+  // breakck;
   mutex_lock(&mark_lock);
   gccount++;
   times(&tbuf1);
@@ -288,7 +288,7 @@ gc()
 		freeheap,totalheap,markctx->vsp - markctx->stack);
     fprintf(stderr," mark=%d sweep=%d\n", marktime,sweeptime);}
   mutex_unlock(&mark_lock);
-  breakck;
+  // breakck;
 }
 #endif
 

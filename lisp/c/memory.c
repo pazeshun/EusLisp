@@ -781,6 +781,8 @@ void gc()
   int i, r;
   context *ctx=euscontexts[thr_self()];
 
+  fprintf(stderr,";; gc: thread=%d ctx=%p\n",thr_self(), ctx);
+
   if (debug)  fprintf(stderr,"\n;; gc: thread=%d ",thr_self());
   // breakck;
   gccount++;

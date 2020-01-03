@@ -86,10 +86,10 @@ register pointer s;
 		strbuf-4,intval(lsave),0,0);
 #endif
 #if system5 || Solaris2
-      if (c<0) { breakck; goto tryqread;}
+      if (c<0) {  goto tryqread;}
 #endif
 #if sun3 || sun4 || vax || apollo || news || sanyo || mips || i386 || alpha || x86_64 || ARM
-      breakck;
+      // breakck;
 #endif
       s->c.stream.buffer->c.str.length=lsave;
       if (c==0) return(EOF);
@@ -100,7 +100,7 @@ register pointer s;
 	     intval((s->c.stream.buffer)->c.str.length)););
       if (debug) {
 	printf(";; read; stat=%d errno=%d, intsig=%d\n", c, errno, ctx->intsig);}
-      breakck;
+      // breakck;
 #if !Cygwin /* if (c<0) goto tryfread; */
       if (c<0) goto tryfread;
 #endif
@@ -175,16 +175,16 @@ register pointer s;
 #if !news
       stat=msgsnd(fno,bstr->c.str.chars-4,cnt,0);
 #endif
-      breakck;
+      // breakck;
       bstr->c.str.length=lsave;}
     else {
       tryfwrite:
       stat=write(fno,bstr->c.str.chars,cnt);
 #if system5
-      if (stat<0) { breakck; goto tryfwrite;}
+      if (stat<0) {  goto tryfwrite;}
 #endif
 #if sun3 || sun4 || apollo || vax || news || sanyo || mips || alpha
-      breakck;
+      // breakck;
 #endif
       }
     if (stat>=0) { s->c.stream.count=makeint(0); return(0);}

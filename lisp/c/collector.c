@@ -876,7 +876,7 @@ static int do_gc_epilogue()
       ufuncall(ctx,gchook,gchook,(pointer)(ctx->vsp-2),ctx->bindfp,2);
       ctx->vsp -= 2;
     }
-    breakck;
+    // breakck;
 */
 
     DPRINT2("GC cycle finished: free rate = %lf", (double)freeheap / totalheap);

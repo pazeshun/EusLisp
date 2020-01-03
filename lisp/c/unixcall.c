@@ -1254,7 +1254,7 @@ pointer *argv;
   buf->c.str.length=(pointer)(eusinteger_t)mtype;/* ???? */
   rcv_again:
   stat=msgrcv(qid,&buf->c.str.length,intval(lsave),mtype,flag);
-  if (stat<0) { breakck; goto rcv_again;}
+  if (stat<0) {  goto rcv_again;}
   mtype=(int)(eusinteger_t)(buf->c.str.length);/* ???? */
   buf->c.str.length=lsave;
   if (stat<0) return(makeint(-errno));
@@ -1376,7 +1376,7 @@ pointer *argv;
   GC_REGION(treq.tv_sec=ckintval(argv[0]));
   treq.tv_nsec = 0;
   while (nanosleep(&treq, &trem)<0) {
-    breakck;	/*signal exists?*/
+    // breakck;	/*signal exists?*/
     treq=trem;}
   return(T);}
 
@@ -1390,7 +1390,7 @@ pointer *argv;
   GC_REGION(treq.tv_sec  =  ckintval(argv[0])/1000000;
             treq.tv_nsec = (ckintval(argv[0])%1000000)*1000);
   while (nanosleep(&treq, &trem)<0) {
-    breakck;
+    // breakck;
     treq=trem;}
   return(T);}
 #endif
@@ -1505,7 +1505,7 @@ pointer argv[];
   if (sa->sa_family==AF_UNIX) l=strlen(sa->sa_data)+2;
   else l=sizeof(struct sockaddr_in);
   s=(int)connect(s, sa, l);
-  breakck;
+  // breakck;
   if (s) return(makeint(-errno)); else return(makeint(0));
 }
 

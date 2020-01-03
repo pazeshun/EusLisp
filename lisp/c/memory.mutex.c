@@ -472,7 +472,7 @@ void sweepall()
 #if vxworks
 gc()
 { if (debug)  fprintf(stderr,"\n;; gc:");
-  breakck;
+  // breakck;
   gccount++;
   markall();
   sweepall();
@@ -480,7 +480,7 @@ gc()
     fprintf(stderr," free/total=%d/%d stack=%d ",
         	freeheap,totalheap,markctx->vsp-markctx->stack);
     }
-  breakck;
+  // breakck;
   }
 
 #else 
@@ -489,7 +489,7 @@ gc()
 { struct tms tbuf1,tbuf2,tbuf3;
 
   if (debug)  fprintf(stderr,"\n;; gc: thread=%d ",thr_self());
-  breakck;
+  // breakck;
   gccount++;
   times(&tbuf1);
 
@@ -512,7 +512,7 @@ gc()
 #if Solaris2
   mutex_unlock(&mark_lock);
 #endif
-  breakck;
+  // breakck;
 }
 #endif
 

@@ -1118,7 +1118,7 @@ char *prompt;
       fflush(stdout);}
     p=reader(ctx,STDIN,NIL);
     if (p==(pointer)EOF) return(NIL);
-    breakck;
+    // breakck;
     q=eval(ctx,p);
     if (q!=UNBOUND) { prinx(ctx,q,STDOUT); terpri(STDOUT);}}
   while (1);}

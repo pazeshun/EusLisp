@@ -107,7 +107,7 @@ register context *ctx;
     initfunc=module_initializers[i].entry_func;
     mod=makemodule(ctx,0);
     vpush(mod);
-    breakck;
+    // breakck;
     if (initfunc) { 
       addr = (eusinteger_t)initfunc;
       addr= addr>>2;
@@ -403,7 +403,7 @@ pointer *argv;
   vpush(mod);
 
   /*call initializer*/
-  breakck;
+  // breakck;
   if (initfunc) { 
     addr=(eusinteger_t)initfunc; addr >>=2;/* ???? */
     mod->c.ldmod.codevec=makeint(0);
